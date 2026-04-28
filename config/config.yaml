@@ -1,0 +1,19 @@
+data:
+  filepath: '../data/dataset/mnist.pkl'
+  normalize: false
+  standardize: true
+  batch_size: 8
+
+model:
+  network_dims: [ 784, 64, 10 ]
+  epochs: 50
+  early_stopping: false
+  dense_layer_kwargs:
+    weight_mu: 0.0
+    weight_sigma: 1
+    bias_value: 0.0
+
+optimizer:
+  momentum: true
+  l2_penalty: 0.0001
+  learning_rate: 0.0025

@@ -6,39 +6,33 @@ from torch.utils.data import DataLoader
 from data.data_loader import MnistDataset
 from models.inception_model import InceptionModel
 from models.residual_model import ResidualModel
-from utils.Trainer import Trainer
-from utils.mnist_utils import load_mnist_from_pkl
+from utils.trainer import Trainer
 
-
-def load_config(config_path="config.yaml"):
-    with open(config_path, "r") as f:
-        return yaml.safe_load(f)
-
+from utils.config_utils import load_config, get_datasets
+from utils.mnist_utils import load_mnist_from_pkl, load_fashion_mnist_raw
 
 if __name__ == '__main__':
     config = load_config('../config/config.yaml')
-    (x_train, y_train), (x_val, y_val), (x_test, y_test) = load_mnist_from_pkl(filepath=config['data']['filepath'])
-
-    train_dataset = MnistDataset(x_train, y_train)
-    val_dataset = MnistDataset(x_val, y_val)
-    test_dataset = MnistDataset(x_test, y_test)
-
+    device = config['model']['device']
+    train_dataset, val_dataset, test_dataset = get_datasets(config)
     batch_size = config['data']['batch_size']
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
     test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
 
     model = config['model']
-    if config['model']['arch'] == 'a':
+    arch = config['model']['arch']
+    if arch == 'a':
         model = ResidualModel()
-    elif config['model']['arch'] == 'a':
+    elif arch == 'b':
         model = InceptionModel()
     else:
         model = InceptionModel()
-
+    model = model.to(device)
     optimizer = torch.optim.SGD(model.parameters(), lr=config['optimizer']['lr'],
                                 momentum=config['optimizer']['momentum'])
     trainer = Trainer(
+        device=device,
         model=model,
         optimizer=optimizer,
         loss_fn=CrossEntropyLoss(),
@@ -48,4 +42,4 @@ if __name__ == '__main__':
                   epochs=config['model']['epochs'])
     trainer.plot_learning_curves()
     trainer.plot_confusion_matrix(val_loader)
-    trainer.save_model("../models/saved/mnist_model.pkl")
+    trainer.save_model(f"../models/saved/mnist_model_{arch}.pth")

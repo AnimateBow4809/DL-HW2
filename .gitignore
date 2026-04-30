@@ -107,3 +107,5 @@ predictions/
 # macOS / Windows thumbs
 Thumbs.db
 ehthumbs.db
+
+**.gz

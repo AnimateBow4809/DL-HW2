@@ -1,11 +1,22 @@
 ﻿import seaborn as sns
 import matplotlib.pyplot as plt
 import numpy as np
+import torch
 
 plt.style.use('default')
 
+def _to_numpy(data):
+    """Safely converts PyTorch tensors to NumPy arrays, leaving NumPy arrays alone."""
+    if torch.is_tensor(data):
+        return data.detach().cpu().numpy()
+    return np.array(data)
+
+
 
 def plot_random_samples(x, y, samples_per_class=5):
+    x = _to_numpy(x)
+    y = _to_numpy(y)
+
     num_classes = 10
     fig, axes = plt.subplots(nrows=num_classes,
                              ncols=samples_per_class,
@@ -17,13 +28,18 @@ def plot_random_samples(x, y, samples_per_class=5):
 
         for col_idx, img_idx in enumerate(selected_indices):
             ax = axes[class_idx, col_idx]
+            img = x[img_idx]
 
-            ax.imshow(x[img_idx], cmap='gray', interpolation='nearest', vmin=0.0, vmax=1.0)
+            # PyTorch transforms often add a channel dimension: (1, 28, 28)
+            # Matplotlib requires (28, 28) for grayscale
+            if img.ndim == 3 and img.shape[0] == 1:
+                img = img.squeeze(0)
 
+            # Removed vmin/vmax so it dynamically adapts if you use Standard scaling later!
+            ax.imshow(img, cmap='gray', interpolation='nearest')
             ax.set_xticks([0, 14, 27])
             ax.set_yticks([0, 14, 27])
             ax.tick_params(axis='both', labelsize=7)
-
             if col_idx > 0:
                 ax.set_yticklabels([])
             if class_idx < num_classes - 1:
@@ -39,11 +55,10 @@ def plot_random_samples(x, y, samples_per_class=5):
 def plot_class_distribution(y_train, y_val, y_test):
     fig, axes = plt.subplots(1, 3, figsize=(15, 4))
     datasets = [
-        ("Training Set", y_train, "#4C72B0"),
-        ("Validation Set", y_val, "#55A868"),
-        ("Test Set", y_test, "#C44E52")
+        ("Training Set", _to_numpy(y_train).astype(int), "#4C72B0"),
+        ("Validation Set", _to_numpy(y_val).astype(int), "#55A868"),
+        ("Test Set", _to_numpy(y_test).astype(int), "#C44E52")
     ]
-
     classes = np.arange(10)
 
     for ax, (title, y_data, color) in zip(axes, datasets):
@@ -67,21 +82,26 @@ def plot_class_distribution(y_train, y_val, y_test):
 
 
 def plot_learning_curves(history):
+    # Ensure any stray PyTorch tensors in history (e.g. from loss.item()) are floats
+    def clean_metric(metric_list):
+        if not metric_list: return metric_list
+        return [m.item() if torch.is_tensor(m) else m for m in metric_list]
+
     epochs = range(1, len(history['train_loss']) + 1)
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5))
 
-    ax1.plot(epochs, history['train_loss'], label='Train Loss', marker='o')
-    if history['val_loss']:
-        ax1.plot(epochs, history['val_loss'], label='Validation Loss', marker='o')
+    ax1.plot(epochs, clean_metric(history['train_loss']), label='Train Loss', marker='o')
+    if history.get('val_loss'):
+        ax1.plot(epochs, clean_metric(history['val_loss']), label='Validation Loss', marker='o')
     ax1.set_title('Loss over Epochs')
     ax1.set_xlabel('Epoch')
     ax1.set_ylabel('Loss')
     ax1.legend()
     ax1.grid(True)
 
-    ax2.plot(epochs, history['train_acc'], label='Train Accuracy', marker='o')
-    if history['val_acc']:
-        ax2.plot(epochs, history['val_acc'], label='Validation Accuracy', marker='o')
+    ax2.plot(epochs, clean_metric(history['train_acc']), label='Train Accuracy', marker='o')
+    if history.get('val_acc'):
+        ax2.plot(epochs, clean_metric(history['val_acc']), label='Validation Accuracy', marker='o')
     ax2.set_title('Accuracy over Epochs')
     ax2.set_xlabel('Epoch')
     ax2.set_ylabel('Accuracy')
@@ -93,10 +113,14 @@ def plot_learning_curves(history):
 
 
 def plot_confusion_matrix(y_true, y_pred, class_names=None):
+    y_true = _to_numpy(y_true).astype(int)
+    y_pred = _to_numpy(y_pred).astype(int)
+
     num_classes = max(np.max(y_true), np.max(y_pred)) + 1
     cm = np.zeros((num_classes, num_classes), dtype=int)
     for t, p in zip(y_true, y_pred):
         cm[t, p] += 1
+
     plt.figure(figsize=(8, 6))
     sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
                 xticklabels=class_names if class_names else 'auto',
@@ -109,38 +133,37 @@ def plot_confusion_matrix(y_true, y_pred, class_names=None):
 
 
 def plot_image_predictions(images, true_labels, pred_labels, image_shape=(28, 28)):
+    images = _to_numpy(images)
+    true_labels = _to_numpy(true_labels)
+    pred_labels = _to_numpy(pred_labels)
+
     num_images = len(images)
     if num_images == 0:
         print("No images to display.")
         return
 
-    # Adjust figure size based on the academic layout proportions
     fig, axes = plt.subplots(nrows=1, ncols=num_images, figsize=(num_images * 1.5, 2.0))
     if num_images == 1:
         axes = [axes]
 
     for i in range(num_images):
         ax = axes[i]
-        img = images[i].reshape(image_shape)
+        img = images[i].squeeze().reshape(image_shape)
+
         true_label = true_labels[i]
         pred_label = pred_labels[i]
 
-        # Use nearest interpolation to match plot_random_samples
         ax.imshow(img, cmap='gray', interpolation='nearest')
 
-        # Dynamically set ticks based on the image shape (e.g., [0, 14, 27] for 28x28)
         mid_y, mid_x = image_shape[0] // 2, image_shape[1] // 2
         ax.set_xticks([0, mid_x, image_shape[1] - 1])
         ax.set_yticks([0, mid_y, image_shape[0] - 1])
         ax.tick_params(axis='both', labelsize=7)
 
-        # Remove y-axis tick labels for all but the first image to save space
         if i > 0:
             ax.set_yticklabels([])
 
-        # Use the specific hex colors from your plot_class_distribution
         color = '#55A868' if true_label == pred_label else '#C44E52'
-
         ax.set_title(f"T:{true_label} | P:{pred_label}",
                      color=color,
                      fontsize=10,

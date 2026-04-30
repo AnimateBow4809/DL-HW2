@@ -109,3 +109,5 @@ Thumbs.db
 ehthumbs.db
 
 **.gz
+
+!plots/**

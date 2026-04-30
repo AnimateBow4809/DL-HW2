@@ -1,9 +1,12 @@
-﻿import yaml
-from data.data_loader import MnistDataset, DataLoader
-from utils.Trainer import Trainer
-from utils.loss import CrossEntropyLoss
-from utils.mnist_utils import load_mnist_from_pkl
-from utils.optimizaer import *
+﻿import torch
+import yaml
+from torch.nn import CrossEntropyLoss
+from torch.utils.data import DataLoader
+
+from models.inception_model import InceptionModel
+from models.residual_model import ResidualModel
+from utils.config_utils import get_datasets
+from utils.trainer import Trainer
 
 
 def load_config(config_path="config.yaml"):
@@ -13,36 +16,37 @@ def load_config(config_path="config.yaml"):
 
 if __name__ == '__main__':
     config = load_config('../config/config.yaml')
-    (x_train, y_train), (x_val, y_val), (x_test, y_test) = load_mnist_from_pkl(
-        filepath=config['data']['filepath'],
-        normalize=config['data']['normalize'],
-        standardize=config['data']['standardize']
-    )
-
-    train_dataset = MnistDataset(x_train, y_train)
-    val_dataset = MnistDataset(x_val, y_val)
-    test_dataset = MnistDataset(x_test, y_test)
-
+    device = config['model']['device']
+    train_dataset, val_dataset, test_dataset = get_datasets(config)
+    y_train = train_dataset.y
     batch_size = config['data']['batch_size']
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
     test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
 
-    optimizer = SGDMomentum if config['optimizer']['momentum'] else SGD
+    model = config['model']
+    arch = config['model']['arch']
+    if arch == 'a':
+        model = ResidualModel()
+    elif arch == 'b':
+        model = InceptionModel()
+    else:
+        model = InceptionModel()
+    model = model.to(device)
+    optimizer = torch.optim.SGD(model.parameters(), lr=config['optimizer']['lr'],
+                                momentum=config['optimizer']['momentum'])
     trainer = Trainer(
-        network_dims=config['model']['network_dims'],
-        optimizer_instance=optimizer(learning_rate=config['optimizer']['learning_rate']
-                                     ,l2_penalty=config['optimizer']['l2_penalty']),
-        loss_function_class=CrossEntropyLoss,
-        epochs=config['model']['epochs'],
-        dense_layer_kwargs=config['model']['dense_layer_kwargs'],
+        device=device,
+        model=model,
+        optimizer=optimizer,
+        loss_fn=CrossEntropyLoss(),
     )
-    trainer.load_model("../models/saved/mnist_model.pkl")
+    trainer.load_model(f"../models/saved/mnist_model_{arch}.pth")
     trainer.plot_confusion_matrix(test_loader)
     trainer.plot_misclassified_predictions(test_loader)
     test_loss, test_acc = trainer.evaluate(test_loader)
     per_class_accuracy = trainer.get_per_class_accuracy(test_loader)
     print(f"Final Test Accuracy: {test_acc:.4f}")
     for i in range(10):
-        print(f"Class {i} Accuracy: {per_class_accuracy[i]["accuracy"]}, "
-              f"Total Samples: {np.sum(y_train==i)}")
+        print(f"Class {i} Accuracy: {per_class_accuracy[i]['accuracy']}, "
+              f"Total Samples: {torch.sum(torch.from_numpy(y_train)==i)}")

@@ -1,16 +1,16 @@
 data:
-  dataset: "fashion" # or fashion
-  dataset_path: '../data/dataset/fashion' # '../data/dataset/fashion' or '../data/dataset/normal/mnist.pkl'
+  dataset: "mnist" # or fashion
+  dataset_path: '../data/dataset/normal/mnist.pkl' # '../data/dataset/fashion' or '../data/dataset/normal/mnist.pkl'
   normalize: false
   standardize: true
   batch_size: 256
 
 model:
   device: "cpu"
-  arch: "a" # options: a,b,c
-  epochs: 50
+  arch: "b" # options: a,b,c
+  epochs: 5
   early_stopping: true
 optimizer:
-  momentum: 0.9
+  momentum: 0
   l2_penalty: 0.0001
-  lr: 0.1
+  lr: 0.01

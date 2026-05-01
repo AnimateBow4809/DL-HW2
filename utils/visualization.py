@@ -1,4 +1,6 @@
-﻿import seaborn as sns
+﻿import math
+
+import seaborn as sns
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
@@ -173,3 +175,37 @@ def plot_image_predictions(images, true_labels, pred_labels, image_shape=(28, 28
     plt.subplots_adjust(wspace=0.1)
     plt.tight_layout()
     plt.show()
+
+
+def plot_feature_maps(input_img, x, y, z):
+    input_img = input_img.detach().cpu().squeeze()
+    x = x.detach().cpu().squeeze()
+    y = y.detach().cpu().squeeze()
+    z = z.detach().cpu().squeeze()
+
+    def plot_grid(tensor, title):
+        num_filters = tensor.shape[0]
+        cols = 8
+        rows = math.ceil(num_filters / cols)
+        fig, axes = plt.subplots(rows, cols, figsize=(cols * 1.5, rows * 1.5))
+        fig.suptitle(title, fontsize=16)
+        if num_filters == 1:
+            axes = [axes]
+        else:
+            axes = axes.flat
+        for i, ax in enumerate(axes):
+            if i < num_filters:
+                ax.imshow(tensor[i], cmap='viridis')
+            ax.axis('off')
+        plt.tight_layout()
+        plt.show()
+    plt.figure(figsize=(3, 3))
+    if input_img.ndim == 3:
+        input_img = input_img.permute(1, 2, 0)
+    plt.imshow(input_img, cmap='gray')
+    plt.title("Original Input")
+    plt.axis('off')
+    plt.show()
+    plot_grid(x, "After Conv (x)")
+    plot_grid(y, "After BatchNorm (y)")
+    plot_grid(z, "After ReLU (z)")

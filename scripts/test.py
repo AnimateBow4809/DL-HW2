@@ -34,7 +34,7 @@ if __name__ == '__main__':
         optimizer=optimizer,
         loss_fn=CrossEntropyLoss(),
     )
-    trainer.load_model(f"../models/saved/mnist_model_{arch}.pth")
+    trainer.plot_feature_maps(test_loader)
     trainer.plot_confusion_matrix(test_loader)
     trainer.plot_misclassified_predictions(test_loader)
     test_loss, test_acc = trainer.evaluate(test_loader)

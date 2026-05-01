@@ -3,8 +3,10 @@ import numpy as np
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 from torchinfo import summary
+
+from utils.model_utils import get_first_block_activation
 # Assuming these are your custom utils
-from utils.visualization import plot_learning_curves, plot_confusion_matrix, plot_image_predictions
+from utils.visualization import plot_learning_curves, plot_confusion_matrix, plot_image_predictions, plot_feature_maps
 
 
 class Trainer:
@@ -148,6 +150,10 @@ class Trainer:
         y_true, y_pred = self._predict(dataLoader)
         plot_confusion_matrix(y_true, y_pred, class_names=[i for i in range(num_classes)])
 
+    def plot_feature_maps(self, dataLoader: DataLoader):
+        input = next(iter(dataLoader))
+        x, y, z = get_first_block_activation(self.model, input)
+        plot_feature_maps(input,x,y,z)
     def _predict(self, dataLoader: DataLoader):
         all_preds = []
         all_labels = []

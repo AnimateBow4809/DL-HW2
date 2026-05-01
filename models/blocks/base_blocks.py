@@ -1,12 +1,12 @@
-﻿from torch import nn
+﻿import torch.nn as nn
 
 
 class BasicConv2d(nn.Module):
-    def __init__(self, in_channels, out_channels, kernel_size, stride=1, padding=0
-                 , bias=False, use_relu=True,pooling = "None"):
-        super().__init__()
+    def __init__(self, in_channels, out_channels, kernel_size, stride=1, padding=0,
+                 groups=1, bias=False, use_relu=True, pooling="None"):
+        super(BasicConv2d,self).__init__()
         self.conv = nn.Conv2d(in_channels, out_channels, kernel_size=kernel_size,
-                              stride=stride, padding=padding, bias=bias)
+                              stride=stride, padding=padding, groups=groups, bias=bias)
         self.bn = nn.BatchNorm2d(out_channels)
         self.use_relu = use_relu
         if self.use_relu:

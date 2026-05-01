@@ -6,6 +6,7 @@ from torch.utils.data import DataLoader
 from data.data_loader import MnistDataset
 from models.inception_model import InceptionModel
 from models.residual_model import ResidualModel
+from models.resnext_model import ResNeXtModel
 from utils.trainer import Trainer
 
 from utils.config_utils import load_config, get_datasets
@@ -26,10 +27,13 @@ if __name__ == '__main__':
         model = ResidualModel()
     elif arch == 'b':
         model = InceptionModel()
+    elif arch == 'c':
+        model = ResNeXtModel()
     else:
-        model = InceptionModel()
+        raise ValueError("Unknown arch {}".format(arch))
     model = model.to(device)
-    optimizer = torch.optim.SGD(model.parameters(), lr=config['optimizer']['lr'],
+    trainable_params = filter(lambda p: p.requires_grad, model.parameters())
+    optimizer = torch.optim.SGD(trainable_params, lr=config['optimizer']['lr'],
                                 momentum=config['optimizer']['momentum'])
     trainer = Trainer(
         device=device,

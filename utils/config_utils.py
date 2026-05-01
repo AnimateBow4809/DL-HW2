@@ -3,12 +3,17 @@ import torchvision.transforms as transforms
 import yaml
 
 from data.data_loader import MnistDataset
+from models.inception_model import InceptionModel
+from models.residual_model import ResidualModel
+from models.resnext_model import ResNeXtModel
 from utils.mnist_utils import *
+from utils.model_utils import freeze_backbone
 
 
 def load_config(config_path="config.yaml"):
     with open(config_path, "r") as f:
         return yaml.safe_load(f)
+
 
 def get_datasets(config):
     if config['data']['dataset'] == "mnist":
@@ -57,3 +62,23 @@ def get_datasets(config):
     val_dataset = MnistDataset(x_val, y_val, transform=val_test_transform)
     test_dataset = MnistDataset(x_test, y_test, transform=val_test_transform)
     return train_dataset, val_dataset, test_dataset
+
+
+def get_model(config):
+    device = config['model']['device']
+    arch = config['model']['arch']
+    if arch == 'a':
+        model = ResidualModel()
+    elif arch == 'b':
+        model = InceptionModel()
+    elif arch == 'c':
+        model = ResNeXtModel()
+    else:
+        raise ValueError("Unknown arch {}".format(arch))
+
+    if config['model']['path'] is not None:
+        model.load_state_dict(torch.load(config['model']['path']))
+    if config['model']['freeze_backbone']:
+        freeze_backbone(model)
+    model = model.to(device)
+    return model

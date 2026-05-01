@@ -9,6 +9,8 @@ model:
   arch: "c" # options: a,b,c
   epochs: 5
   early_stopping: true
+  path : null # path to model checkpoint
+  freeze_backbone : true # freeze model backbone
 optimizer:
   momentum: 0
   l2_penalty: 0.0001

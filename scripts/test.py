@@ -5,7 +5,7 @@ from torch.utils.data import DataLoader
 
 from models.inception_model import InceptionModel
 from models.residual_model import ResidualModel
-from utils.config_utils import get_datasets
+from utils.config_utils import get_datasets, get_model
 from utils.trainer import Trainer
 
 
@@ -16,7 +16,6 @@ def load_config(config_path="config.yaml"):
 
 if __name__ == '__main__':
     config = load_config('../config/config.yaml')
-    device = config['model']['device']
     train_dataset, val_dataset, test_dataset = get_datasets(config)
     y_train = train_dataset.y
     batch_size = config['data']['batch_size']
@@ -24,15 +23,9 @@ if __name__ == '__main__':
     val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
     test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
 
-    model = config['model']
+    device = config['model']['device']
     arch = config['model']['arch']
-    if arch == 'a':
-        model = ResidualModel()
-    elif arch == 'b':
-        model = InceptionModel()
-    else:
-        model = InceptionModel()
-    model = model.to(device)
+    model = get_model(config)
     optimizer = torch.optim.SGD(model.parameters(), lr=config['optimizer']['lr'],
                                 momentum=config['optimizer']['momentum'])
     trainer = Trainer(

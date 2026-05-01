@@ -1,0 +1,18 @@
+=================================================================
+Total params: 844,202
+Trainable params: 844,202
+Non-trainable params: 0
+=================================================================
+Final Test Accuracy: 0.9878
+Class 0 Accuracy: 0.9734693877551021, Total Samples: 4932
+Class 1 Accuracy: 0.9947136563876652, Total Samples: 5678
+Class 2 Accuracy: 0.9874031007751938, Total Samples: 4968
+Class 3 Accuracy: 0.9930693069306931, Total Samples: 5101
+Class 4 Accuracy: 0.9816700610997964, Total Samples: 4859
+Class 5 Accuracy: 0.9876681614349776, Total Samples: 4506
+Class 6 Accuracy: 0.9906054279749478, Total Samples: 4951
+Class 7 Accuracy: 0.9883268482490273, Total Samples: 5175
+Class 8 Accuracy: 0.9887063655030801, Total Samples: 4842
+Class 9 Accuracy: 0.9910802775024777, Total Samples: 4988
+
+Process finished with exit code 0

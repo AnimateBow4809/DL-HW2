@@ -3,6 +3,7 @@ import torchvision.transforms as transforms
 import yaml
 
 from data.data_loader import MnistDataset
+from models.hybrid_model import HybridModel
 from models.inception_model import InceptionModel
 from models.residual_model import ResidualModel
 from models.resnext_model import ResNeXtModel
@@ -74,6 +75,8 @@ def get_model(config):
         model = InceptionModel()
     elif arch == 'c':
         model = ResNeXtModel()
+    elif arch == 'd':
+        model = HybridModel()
     else:
         raise ValueError("Unknown arch {}".format(arch))
 

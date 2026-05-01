@@ -3,15 +3,14 @@ Total params: 1,801,706
 Trainable params: 1,801,706
 Non-trainable params: 0
 =================================================================
-Model loaded from ../models/saved/mnist_model_a.pth
-Final Test Accuracy: 0.9908
-Class 0 Accuracy: 0.9959183673469387, Total Samples: 4932
-Class 1 Accuracy: 0.9973568281938326, Total Samples: 5678
-Class 2 Accuracy: 0.9922480620155039, Total Samples: 4968
-Class 3 Accuracy: 0.995049504950495, Total Samples: 5101
-Class 4 Accuracy: 0.9908350305498982, Total Samples: 4859
-Class 5 Accuracy: 0.9910313901345291, Total Samples: 4506
-Class 6 Accuracy: 0.9812108559498957, Total Samples: 4951
-Class 7 Accuracy: 0.9922178988326849, Total Samples: 5175
-Class 8 Accuracy: 0.9887063655030801, Total Samples: 4842
-Class 9 Accuracy: 0.9821605550049554, Total Samples: 4988
+Final Test Accuracy: 0.9868
+Class 0 Accuracy: 0.9948979591836735, Total Samples: 4932
+Class 1 Accuracy: 0.9955947136563876, Total Samples: 5678
+Class 2 Accuracy: 0.9961240310077519, Total Samples: 4968
+Class 3 Accuracy: 0.9861386138613861, Total Samples: 5101
+Class 4 Accuracy: 0.9674134419551935, Total Samples: 4859
+Class 5 Accuracy: 0.9943946188340808, Total Samples: 4506
+Class 6 Accuracy: 0.988517745302714, Total Samples: 4951
+Class 7 Accuracy: 0.980544747081712, Total Samples: 5175
+Class 8 Accuracy: 0.9958932238193019, Total Samples: 4842
+Class 9 Accuracy: 0.9682854311199207, Total Samples: 4988

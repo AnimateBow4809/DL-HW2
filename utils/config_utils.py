@@ -16,7 +16,8 @@ def load_config(config_path="config.yaml"):
 
 
 def get_datasets(config):
-    if config['data']['dataset'] == "mnist":
+    dataset = config['data']['dataset']
+    if dataset == "mnist":
         train_transform = transforms.Compose([
             transforms.ToTensor(),
             transforms.RandomAffine(degrees=10, translate=(0.1, 0.1)),
@@ -29,7 +30,7 @@ def get_datasets(config):
         (x_train, y_train), (x_val, y_val), (x_test, y_test) = load_mnist_from_pkl(
             filepath=config['data']['mnist_path'])
 
-    elif config['data']['dataset'] == "fashion":
+    elif dataset == "fashion":
         train_transform = transforms.Compose([
             transforms.ToTensor(),
             transforms.RandomHorizontalFlip(p=0.5),

@@ -151,7 +151,7 @@ class Trainer:
         plot_confusion_matrix(y_true, y_pred, class_names=[i for i in range(num_classes)])
 
     def plot_feature_maps(self, dataLoader: DataLoader):
-        input = next(iter(dataLoader))
+        input = next(iter(dataLoader))[0][0].unsqueeze(0)
         x, y, z = get_first_block_activation(self.model, input)
         plot_feature_maps(input,x,y,z)
     def _predict(self, dataLoader: DataLoader):

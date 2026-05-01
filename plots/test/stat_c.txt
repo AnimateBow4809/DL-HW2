@@ -1,0 +1,39 @@
+=================================================================
+Total params: 433,258
+Trainable params: 433,258
+Non-trainable params: 0
+=================================================================
+Final Test Accuracy: 0.9823
+Class 0 Accuracy: 0.996938775510204, Total Samples: 4932
+Class 1 Accuracy: 0.9955947136563876, Total Samples: 5678
+Class 2 Accuracy: 0.9796511627906976, Total Samples: 4968
+Class 3 Accuracy: 0.994059405940594, Total Samples: 5101
+Class 4 Accuracy: 0.9877800407331976, Total Samples: 4859
+Class 5 Accuracy: 0.9865470852017937, Total Samples: 4506
+Class 6 Accuracy: 0.9707724425887265, Total Samples: 4951
+Class 7 Accuracy: 0.995136186770428, Total Samples: 5175
+Class 8 Accuracy: 0.946611909650924, Total Samples: 4842
+Class 9 Accuracy: 0.9672943508424182, Total Samples: 4988
+
+
+
+
+
+=================================================================
+Total params: 433,258
+Trainable params: 2,570
+Non-trainable params: 430,688
+=================================================================
+Final Test Accuracy: 0.6841
+Class 0 Accuracy: 0.715, Total Samples: 5020
+Class 1 Accuracy: 0.925, Total Samples: 5021
+Class 2 Accuracy: 0.673, Total Samples: 4939
+Class 3 Accuracy: 0.642, Total Samples: 5026
+Class 4 Accuracy: 0.559, Total Samples: 4954
+Class 5 Accuracy: 0.784, Total Samples: 4945
+Class 6 Accuracy: 0.142, Total Samples: 5016
+Class 7 Accuracy: 0.791, Total Samples: 5007
+Class 8 Accuracy: 0.785, Total Samples: 5043
+Class 9 Accuracy: 0.825, Total Samples: 5029
+
+Process finished with exit code 0

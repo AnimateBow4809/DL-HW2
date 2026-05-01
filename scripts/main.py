@@ -14,13 +14,14 @@ from utils.mnist_utils import load_mnist_from_pkl, load_fashion_mnist_raw
 
 if __name__ == '__main__':
     config = load_config('../config/config.yaml')
-    train_dataset, val_dataset, test_dataset = get_datasets(config)
+    device = config['model']['device']
+    arch = config['model']['arch']
+    dataset = config['data']['dataset']
     batch_size = config['data']['batch_size']
+    train_dataset, val_dataset, test_dataset = get_datasets(config)
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
     test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
-    device = config['model']['device']
-    arch = config['model']['arch']
     model = get_model(config)
     trainable_params = filter(lambda p: p.requires_grad, model.parameters())
     optimizer = torch.optim.SGD(trainable_params, lr=config['optimizer']['lr'],
@@ -36,4 +37,4 @@ if __name__ == '__main__':
                   epochs=config['model']['epochs'])
     trainer.plot_learning_curves()
     trainer.plot_confusion_matrix(val_loader)
-    trainer.save_model(f"../models/saved/mnist_model_{arch}.pth")
+    trainer.save_model(f"../models/saved/{dataset}_model_{arch}.pth")
